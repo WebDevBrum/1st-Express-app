@@ -1,13 +1,8 @@
-doctype html
-html(lang="en")
-  head
-    title Flash cards
-  body
-    header
-      h1 Flash cards
-    section#content 
-      h2= prompt
+extends layout.pug
+
+block content
+  section#content 
+    h2= prompt
+    if hint
       p 
         i  Hint: #{hint}
-    footer 
-        p An app to help you study.
