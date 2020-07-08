@@ -11,12 +11,20 @@ app;
 
 app.set("view engine", "pug");
 app.use(cookieParser());
+app.use("/static", express.static("public"));
+
+const mainRoutes = require("./routes"); //node auto chooses index file
+const cardRoutes = require("./routes/cards");
+
+app.use(mainRoutes); // calls the routes module
+app.use("/cards", cardRoutes); //used for flashcard routes, using cardroutes variable
 
 app.use((req, res, next) => {
   //req.message = "This message made it"; //.message could be any name
   console.log("hello");
-  const err = new Error("on no!");
-  next(err);
+  //const err = new Error("on no!");
+  //err.status = 500;
+  next(); //err also taken out of next
 });
 
 app.use((req, res, next) => {
@@ -25,41 +33,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => {
-  const name = req.cookies.username; //renders name as post response body username (after render)
-  if (name) {
-    //checks if cookie exists , if not redirects to /hello
-    res.render("index", { name }); //view variable name assigned const name was {name: name } but key:value if same name in es6 can just use name as thaey are the same
-  } else {
-    res.redirect("/hello");
-  }
-});
-// get appends to url, post sends data to the server to update a resource, can also define a response cookie
-app.get("/cards", (req, res) => {
-  res.render("card", {
-    prompt: "Who is buried in Grants tomb?",
-  });
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
 });
 
-app.get("/hello", (req, res) => {
-  const name = req.cookies.username;
-  if (name) {
-    // like above, checks if cookie available
-    res.redirect("/");
-  } else {
-    res.render("hello");
-  }
-}); //requests username from cookies
-
-app.post("/hello", (req, res) => {
-  //console.log(req.body);
-  res.cookie("username", req.body.username); //adds cookie from request body name=username via a cookie response (cookie parser requires)
-  res.redirect("/");
-});
-
-app.post("/goodbye", (req, res) => {
-  res.clearCookie("username");
-  res.redirect("/hello");
+app.use((err, req, res, next) => {
+  //induced error
+  res.locals.error = err;
+  res.status(err.status);
+  res.render("error");
 });
 
 app.listen(3000, () => {
