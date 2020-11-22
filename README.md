@@ -8,4 +8,18 @@
 
 ## Getting Started
 
-No pre requisite installation required. Built using HTML and CSS
+First install the project dependencies with 
+
+```
+npm install
+```
+
+And run the app using 
+
+```
+node app.js
+```
+
+Then browse to the URL 
+
+*http://localhost:3000/*
